@@ -1,0 +1,38 @@
+Piano.wav
+(1-4-5-1 Progression in Cmaj, played on piano) : 
+Chords     : Cmaj    - Fmaj    - Gmaj    - Cmaj 
+Notes      : [C,E,G] - [F,A,C] - [G,B,D] - [C,E,G]
+
+Comments:
+- This will wav file will have many more frequencies (beyond the fundamentals of C,E,G,F,A,B,D) because of the harmonics pianos generate
+- Used an Ableton Live Piano VST and MIDI Keyboard to simulate an acoustic piano
+- File type: WAV
+- Bit Depth: 32
+- Dither: Triangular
+- Sample Rate: 44100Hz
+- Time signature: 4/4
+- BPM (beats / minute) : 100
+- Length (bars): 4
+- Length (beats): 4*4=16
+- Length (time): 9.6 seconds
+- Normalized
+- Converted to MONO upon exporting.
+
+Guitar.wav
+(1-4-5-1 Progression in Cmaj, played on guitar):
+Chords: Cmaj - Fmaj - Gmaj - Cmaj
+*Chords were played as Barre Chords in standard E tuning
+
+Comments:
+- This will wav file will have many additional frequencies because of the harmonics guitars generate
+- File type: WAV
+- Bit Depth: 32
+- Dither: Triangular
+- Sample Rate: 44100Hz
+- Time signature: 4/4
+- BPM (beats / minute) : 100
+- Length (bars): 4
+- Length (beats): 4*4=16
+- Length (time): 9.6 seconds
+- Normalized
+- Converted to MONO upon exporting.
