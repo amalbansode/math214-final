@@ -35,24 +35,32 @@ def run(infile_name, outfile_name):
         #Apply DFT
         yf = rfft(block)
         
-        #<TODO>This is really slow and looks awful, but is good to visualize what is happening
+        # This is really slow and looks awful, but is good to visualize what is happening
         #might crash on your pc tho
-        #xf = rfftfreq(len(yf),d=1./SAMPLE_RATE)
-        #plt.plot(xf, yf, scaley=False)
-        #plt.show()
+        xf = rfftfreq(len(yf),d=1.0/SAMPLE_RATE)
+        # plt.plot(xf, yf, scaley=False)
+        # plt.show()
         
-        #<TODO>Apply Audio Effect (not working)
-        #cutoff = 300 #Hz
-        #yf = brickWallHP(yf, cutoff)
+        # Apply Audio Effect (not working)
+        cutoff = 300 #Hz
+        cutoff_idx = -1
+        for i in range(max(xf.shape)):
+            if xf[i] > cutoff:
+                cutoff_idx = i
+                break
+
+        yf = brickWallHP(yf, cutoff_idx)
+        # plt.plot(xf, yf, scaley=False)
+        # plt.show()
         
         #Inverse DFT
         yf = irfft(yf)
         
         #<TODO>Push the 1024 block window to output. Creates output one block at a time
-        np.append(output, yf)
-        
-    #<TODO> : Not Working, write new audio data to output file   
-    #write(outfile_name, SAMPLE_RATE, output)
+        output = np.append(output, yf)
+
+    #<TODO> : Not Working, write new audio data to output file
+    write(outfile_name, SAMPLE_RATE, output)
     
     
 run(".wav/Piano.wav", "testing.wav")
