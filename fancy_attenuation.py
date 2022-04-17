@@ -4,10 +4,6 @@ from scipy.io.wavfile import read, write
 from scipy.fftpack import rfft, rfftfreq, irfft
 import math
 
-# Plot setup
-# plt.ylim([-1000, 0])
-plt.xlim([0, 20000])
-
 # construct attenuation signal in frequency domain (maybe even dBFs?) <- constant across [20, 20k] Hz
 # per octave, reduce loudness by x dB (attenuation)
 # non-dbfs algo. if it is dbfs, attenuation is negative already
@@ -55,6 +51,10 @@ while f_curr > 20:
     backwards_octave_idx = backwards_octave_idx + 1
 
 plt.plot(AUDIBLE_FREQS, attenuation_amp, scaley=True)
+plt.xlim([0, 1000])
+plt.title("Attenuation Signal in Frequency Domain (Cutoff = 300 Hz)")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Amplitude (unitless)")
 plt.show()
 
 # Now, actually process a file and apply this attenuation filter!
@@ -87,7 +87,12 @@ for block_idx in range(math.floor((max(indata.shape) / BLOCK_SIZE) + 1)):
     xf = rfftfreq(len(yf), d=1.0 / SAMPLE_RATE)
 
     # plot original freq domain
-    # plt.plot(xf, yf, scaley=True)
+    # plt.plot(xf, yf, scaley=False)
+    # plt.xlim([0, 20000])
+    # plt.ylim([0, 70])
+    # plt.title("Frequency Domain in 1st Time Window BEFORE Attenuation")
+    # plt.xlabel("Frequency (Hz)")
+    # plt.ylabel("Amplitude (unitless)")
     # plt.show()
 
     # Apply Audio Effect
@@ -99,7 +104,12 @@ for block_idx in range(math.floor((max(indata.shape) / BLOCK_SIZE) + 1)):
             yf[i] = attenuated
 
     # plot updated freq domain
-    # plt.plot(xf, yf, scaley=True)
+    # plt.plot(xf, yf, scaley=False)
+    # plt.xlim([0, 20000])
+    # plt.ylim([0, 70])
+    # plt.title("Frequency Domain in 1st Time Window AFTER Attenuation")
+    # plt.xlabel("Frequency (Hz)")
+    # plt.ylabel("Amplitude (unitless)")
     # plt.show()
 
     # Inverse DFT
