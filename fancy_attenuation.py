@@ -20,14 +20,17 @@ plt.xlim([0, 20000])
 
 INFILE = "./.wav/Piano.wav"
 OUTFILE = "./fancy.wav"
-CUTOFF_FREQ = 10000  # Hz, exclusive
-ATTENUATION_AMP = 12  # dBs??? idk
+CUTOFF_FREQ = 300  # Hz, exclusive
+ATTENUATION_AMP = 6  # dBs??? idk
 
 AUDIBLE_FREQS = np.arange(start=20, stop=20000, step=1)
 attenuation_amp = np.zeros(AUDIBLE_FREQS.shape)
 
 backwards_octave_idx = 1  # counter as we traverse octaves
-f_curr = CUTOFF_FREQ
+
+# Actually start the filter half an octave before the cutoff
+filter_start_freq = CUTOFF_FREQ + int(CUTOFF_FREQ / 2)
+f_curr = filter_start_freq
 
 # <TODO>-----
 # Convert everything to dB / dbFS?
@@ -35,7 +38,7 @@ f_curr = CUTOFF_FREQ
 # </TODO>-----
 
 while f_curr > 20:
-    num_octaves_from_cutoff = math.log(CUTOFF_FREQ / f_curr, 2)
+    num_octaves_from_cutoff = math.log(filter_start_freq / f_curr, 2)
     print("f_curr " + str(f_curr) + "; N_O " + str(num_octaves_from_cutoff))
     rise = -ATTENUATION_AMP
     run = f_curr / 2
@@ -102,7 +105,7 @@ for block_idx in range(math.floor((max(indata.shape) / BLOCK_SIZE) + 1)):
     # Inverse DFT
     yf = irfft(yf)
 
-    break
+    # break
 
     # Push the 1024 block window to output. Creates output one block at a time
     output = np.append(output, yf)
