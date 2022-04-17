@@ -45,7 +45,8 @@ while f_curr > 20:
             #For any particular octave, our attenuation at each frequency within
             #that octave will be defined by F(f). 
             #F(f) = ( F(f_curr)-F(f_curr/2) )/( f_curr - f_curr/2 )*f + F(f_curr/2)
-
+            #Where F(f_curr/2) = F(f_curr) - ATTENUATION_AMP
+            #And F(CUTOFF_FREQ) = 0 
     #</TODO>-----
     
     for i in range(int(f_curr / 2), int(f_curr)):
