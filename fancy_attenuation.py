@@ -4,6 +4,10 @@ from scipy.io.wavfile import read, write
 from scipy.fftpack import rfft, rfftfreq, irfft
 import math
 
+# Plot setup
+# plt.ylim([-1000, 0])
+plt.xlim([0, 20000])
+
 # construct attenuation signal in frequency domain (maybe even dBFs?) <- constant across [20, 20k] Hz
 # per octave, reduce loudness by x dB (attenuation)
 # non-dbfs algo. if it is dbfs, attenuation is negative already
@@ -16,8 +20,8 @@ import math
 
 INFILE = "./.wav/Piano.wav"
 OUTFILE = "./fancy.wav"
-CUTOFF_FREQ = 500  # Hz, exclusive
-ATTENUATION_AMP = 6  # dBs??? idk
+CUTOFF_FREQ = 10000  # Hz, exclusive
+ATTENUATION_AMP = 12  # dBs??? idk
 
 AUDIBLE_FREQS = np.arange(start=20, stop=20000, step=1)
 attenuation_amp = np.zeros(AUDIBLE_FREQS.shape)
@@ -31,32 +35,23 @@ f_curr = CUTOFF_FREQ
 # </TODO>-----
 
 while f_curr > 20:
-    attenuation_this_octave = -ATTENUATION_AMP * backwards_octave_idx
+    num_octaves_from_cutoff = math.log(CUTOFF_FREQ / f_curr, 2)
+    print("f_curr " + str(f_curr) + "; N_O " + str(num_octaves_from_cutoff))
+    rise = -ATTENUATION_AMP
+    run = f_curr / 2
+    slope_this_octave = rise / run
 
-    # <TODO>-----
-    # Instead of having each frequency within a particular octave
-    # decrease by the same amount, create an attenuation function F such that:
-    # F: [f/2, f]->[amplitude at f - attenuation_this_octave, amplitude at f]
-    # F(f/2) = amplitude at f + ATTENUATION THIS OCTAVE
-    # F(f) = amplitude at f (our base case is F(CUTOFF_FREQ) = 0)
-    # Any other value in (f/2, f) is mapped to some attenuation amount.
-    # It need not be constant across all frequencies within a particular octave.
-    # Example (Linear decay across octave):
-    # For any particular octave, our attenuation at each frequency within
-    # that octave will be defined by F(f).
-    # F(f) = ( F(f_curr)-F(f_curr/2) )/( f_curr - f_curr/2 )*f + F(f_curr/2)
-    # Where F(f_curr/2) = F(f_curr) - ATTENUATION_AMP
-    # And F(CUTOFF_FREQ) = 0
-    # </TODO>-----
+    baseline_attenuation_this_octave = num_octaves_from_cutoff * (-ATTENUATION_AMP)
 
     for i in range(int(f_curr / 2), int(f_curr)):
-        attenuation_amp[i] = attenuation_this_octave
+        attenuation_this_freq = (f_curr - i) * slope_this_octave
+        attenuation_amp[i] = attenuation_this_freq + baseline_attenuation_this_octave
 
-        # for next octave
+    # for next octave
     f_curr = f_curr / 2  # <QUESTION> is this guaranteed to return an integer? </QUESTION>
     backwards_octave_idx = backwards_octave_idx + 1
 
-plt.plot(AUDIBLE_FREQS, attenuation_amp)
+plt.plot(AUDIBLE_FREQS, attenuation_amp, scaley=True)
 plt.show()
 
 # Now, actually process a file and apply this attenuation filter!
@@ -70,10 +65,6 @@ plt.show()
 BLOCK_SIZE = 1024
 SAMPLE_RATE, indata = read(INFILE)
 output = np.empty(0)
-
-# Plot setup
-plt.ylim([0, 15])
-plt.xlim([0, 20000])
 
 # <TODO>-----
 # Windowing function instead of these rectangular blocks. See:
@@ -110,6 +101,8 @@ for block_idx in range(math.floor((max(indata.shape) / BLOCK_SIZE) + 1)):
 
     # Inverse DFT
     yf = irfft(yf)
+
+    break
 
     # Push the 1024 block window to output. Creates output one block at a time
     output = np.append(output, yf)
