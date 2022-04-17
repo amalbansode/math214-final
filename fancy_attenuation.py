@@ -25,13 +25,34 @@ attenuation_amp = np.zeros(AUDIBLE_FREQS.shape)
 backwards_octave_idx = 1  # counter as we traverse octaves
 f_curr = CUTOFF_FREQ
 
+#<TODO>-----
+    #Convert everything to dB / dbFS? 
+    #What are the units of rfft()?
+#</TODO>-----
+
 while f_curr > 20:
     attenuation_this_octave = -ATTENUATION_AMP * backwards_octave_idx
+    
+    #<TODO>-----
+        #Instead of having each frequency within a particular octave 
+        #decrease by the same amount, create an attenuation function F such that:
+            #F: [f/2, f]->[amplitude at f - attenuation_this_octave, amplitude at f]
+            #F(f/2) = amplitude at f + ATTENUATION THIS OCTAVE
+            #F(f) = amplitude at f (our base case is F(CUTOFF_FREQ) = 0)
+            #Any other value in (f/2, f) is mapped to some attenuation amount. 
+            #It need not be constant across all frequencies within a particular octave.
+        #Example (Linear decay across octave): 
+            #For any particular octave, our attenuation at each frequency within
+            #that octave will be defined by F(f). 
+            #F(f) = 
+
+    #</TODO>-----
+    
     for i in range(int(f_curr / 2), int(f_curr)):
-        attenuation_amp[i] = attenuation_this_octave
+        attenuation_amp[i] = attenuation_this_octave 
 
     # for next octave
-    f_curr = f_curr / 2
+    f_curr = f_curr / 2 #<QUESTION> is this guaranteed to return an integer? </QUESTION>
     backwards_octave_idx = backwards_octave_idx + 1
 
 plt.plot(AUDIBLE_FREQS, attenuation_amp)
@@ -52,6 +73,13 @@ output = np.empty(0)
 # Plot setup
 plt.ylim([0, 15])
 plt.xlim([0, 20000])
+
+
+#<TODO>-----
+    #Windowing function instead of these rectangular blocks. See:      
+        #https://flothesof.github.io/FFT-window-properties-frequency-analysis.html For help with python implementation
+        #https://www.ap.com/technical-library/fft-windows/ For general knowledge
+#</TODO>-----
 
 # Iterate over the audio data in discrete 1024 sample "windows" and take the
 # DFT of that, process it, then inverse DFT and push to end of new audio data

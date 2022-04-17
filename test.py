@@ -11,13 +11,65 @@ import soundfile as sf
 from scipy.io.wavfile import write
 from scipy.fftpack import rfft, rfftfreq, irfft
 import matplotlib.pyplot as plt
+from math import *
 
-#Sets all frequencies below a cutoff freq (integer) to 0.
-#We can make other effects later, this just seemed easy for proof of concept
+#------------------------------------------------------------------------------
+#Audio Effects 
+#------------------------------------------------------------------------------
+
+#Hard highpass filter beginning at cutoff. Values [0,cutoff] will be 0
 def brickWallHP(data, cutoff):
     data[0:cutoff+1] = 0
         
     return data
+
+#Hard lowpass filter beginning at cutoff. Values [cutoff, MAX_FREQ] will be 0
+def brickWallLP(data, cutoff):
+    data[cutoff:] = 0
+    
+    return data
+
+#Raises/Lowers volume of entire clip
+def gain(data, dbplusminus):
+    
+    return
+
+#---Note: these are linear rolloffs, the audio software i use has the rolloff
+#         being nonlinear. In general i think this works for signals, but might
+#         be different than what is used in practice for audio applications.
+#
+
+#Lowpass filter decaying at a rate of 6/12/18/24 db/Octave beginning at cutoff
+def dbperoctaveLP(data, dbperOctave, cutoff):
+
+    return 
+
+#Highpass filter decaying at a rate of 6/12/18/24 db/Octave beginning at cutoff
+def dbperoctaveHP(data, dbperOctave, cutoff):
+    #<TODO>convert from whatever y axis is to dB vs freq
+    filtered_db_val = np.max()
+    
+    #x = [1, ..., 20000] (discrete frequency bins)
+    x = np.linspace(1,20000, 20000)
+    #new_levels = taking
+    
+    
+    
+    #y = [frequency ratios : (filtered dB value)/(original dB value)]
+    y = np.array()
+    #<TODO>y[0:cutoff+1] = new amplitude / data[0:cutoff+1]
+    y[cutoff+1:] = 1 #unchanged because within cutoff 
+    
+    #New dB level after filtering
+    data = np.multiply(data, y)
+    
+    #<TODO>convert from whatever y axis is to dB vs freq
+    
+    return data
+
+#------------------------------------------------------------------------------
+#//END AUDIO EFFECTS
+#------------------------------------------------------------------------------
 
 def run(infile_name, outfile_name):
     #File IO stuff
@@ -48,8 +100,10 @@ def run(infile_name, outfile_name):
             if xf[i] > cutoff:
                 cutoff_idx = i
                 break
-
-        yf = brickWallHP(yf, cutoff_idx)
+            
+        dbperoctaveHP(yf, 6, 1000)
+        
+        #yf = brickWallHP(yf, cutoff_idx)
         # plt.plot(xf, yf, scaley=False)
         # plt.show()
         
