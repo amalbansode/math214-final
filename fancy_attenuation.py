@@ -44,7 +44,7 @@ while f_curr > 20:
         #Example (Linear decay across octave): 
             #For any particular octave, our attenuation at each frequency within
             #that octave will be defined by F(f). 
-            #F(f) = 
+            #F(f) = ( F(f_curr)-F(f_curr/2) )/( f_curr - f_curr/2 )*f + F(f_curr/2)
 
     #</TODO>-----
     
